@@ -5,9 +5,10 @@ This is a learning project (take it with a pinch of salt) that builds an ETL pip
 Just created to learn a bit more about spark, airflow, metabase and pandas
 
 ## Components
-- **Extract**: Downloads data from Jeff Sackmann's tennis dataset.
-- **Transform**: Processes data and calculates metrics including a final grade.
-- **Load**: Loads data into PostgreSQL.
+- **ETL script file**: Uses airflow as orchestration layer to build the ETL pipeline.
+- **Jobs:Extract**: Downloads data from Jeff Sackmann's tennis dataset.
+- **Jobs:Transform**: Processes data and calculates metrics including a final grade.
+- **Jobs:Load**: Loads data into PostgreSQL.
 
 ## Setup
 1. Run `make install`.
