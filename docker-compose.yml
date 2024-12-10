@@ -1,0 +1,62 @@
+services:
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U airflow"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  airflow-scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    entrypoint: /scripts/airflow-entrypoint.sh
+    command: scheduler
+    environment:
+      - AIRFLOW__DATABASE__EXECUTOR=LocalExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./airflow/plugins:/opt/airflow/plugins
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  airflow-webserver:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    entrypoint: /scripts/airflow-entrypoint.sh
+    command: webserver
+    environment:
+      - AIRFLOW__DATABASE__EXECUTOR=LocalExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./airflow/plugins:/opt/airflow/plugins
+    depends_on:
+      - airflow-scheduler
+
+  metabase:
+    image: metabase/metabase
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - MB_DB_FILE=/metabase.db
+
+volumes:
+  db_data:

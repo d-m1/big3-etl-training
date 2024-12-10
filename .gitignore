@@ -1,0 +1,31 @@
+# airflow
+airflow/airflow.cfg
+airflow/airflow.db*
+airflow/airflow-webserver.pid
+airflow/webserver_config.py
+airflow/logs/
+airflow/*.db-journal
+airflow/plugins/__pycache__/
+
+# data / dags
+dags/cleaned_data/
+dags/transformed_data/
+dags/**/__pycache__/
+
+# parquet files
+*.parquet
+
+# success files
+*_SUCCESS
+
+# python stuff
+__pycache__/
+*.pyc
+*.pyo
+
+# environment
+.env
+.env.local
+
+# system
+.pid
